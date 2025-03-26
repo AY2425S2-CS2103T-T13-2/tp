@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.checkup.Checkup;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Appointment;
 import seedu.address.model.person.BloodType;
@@ -37,7 +36,6 @@ class JsonAdaptedPerson {
     private final String appointment;
     private final String nextOfKin;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
-    private final List<JsonAdaptedCheckup> checkups = new ArrayList<>();
     private final List<JsonAdaptedMedicalHistory> medicalHistory = new ArrayList<>();
 
     /**
@@ -50,8 +48,7 @@ class JsonAdaptedPerson {
                              @JsonProperty("appointment") String appointment,
                              @JsonProperty("nextOfKin") String nextOfKin,
                              @JsonProperty("tags") List<JsonAdaptedTag> tags,
-                             @JsonProperty("medicalHistory") List<JsonAdaptedMedicalHistory> medicalHistory,
-                             @JsonProperty("checkups") List<JsonAdaptedCheckup> checkups) {
+                             @JsonProperty("medicalHistory") List<JsonAdaptedMedicalHistory> medicalHistory) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -64,13 +61,9 @@ class JsonAdaptedPerson {
             this.tags.addAll(tags);
         }
 
-        if (checkups != null) {
-            this.checkups.addAll(checkups);
-        }
         if (medicalHistory != null) {
             this.medicalHistory.addAll(medicalHistory);
         }
-
     }
 
     /**
@@ -87,9 +80,6 @@ class JsonAdaptedPerson {
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
-        checkups.addAll(source.getCheckups().stream()
-                .map(JsonAdaptedCheckup::new)
-                .collect(Collectors.toList()));
         medicalHistory.addAll(source.getMedicalHistory().stream().map(JsonAdaptedMedicalHistory::new)
                                                                  .collect(Collectors.toList()));
     }
@@ -101,18 +91,14 @@ class JsonAdaptedPerson {
      */
     public Person toModelType() throws IllegalValueException {
         final List<Tag> personTags = new ArrayList<>();
-        final List<Checkup> personCheckups = new ArrayList<>();
         final List<MedicalHistory> personMedicalHistory = new ArrayList<>();
 
         for (JsonAdaptedTag tag : tags) {
             personTags.add(tag.toModelType());
         }
 
-        for (JsonAdaptedCheckup checkup : checkups) {
-            personCheckups.add(checkup.toModelType());
-            for (JsonAdaptedMedicalHistory medicalHistory : medicalHistory) {
-                personMedicalHistory.add(medicalHistory.toModelType());
-            }
+        for (JsonAdaptedMedicalHistory medicalHistory : medicalHistory) {
+            personMedicalHistory.add(medicalHistory.toModelType());
         }
 
         if (name == null) {
@@ -168,9 +154,8 @@ class JsonAdaptedPerson {
         final NextOfKin modelNextOfKin = new NextOfKin(nextOfKin);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        final Set<Checkup> modelCheckups = new HashSet<>(personCheckups);
         final Set<MedicalHistory> modelMedicalHistory = new HashSet<>(personMedicalHistory);
         return new Person(modelName, modelPhone, modelEmail, modelAddress, modelBloodType,
-                modelAppointment, modelTags, modelNextOfKin, modelMedicalHistory, modelCheckups);
+                modelAppointment, modelTags, modelNextOfKin, modelMedicalHistory);
     }
 }
