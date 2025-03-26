@@ -1,5 +1,0 @@
-language: "java"
-name: "tp"
-appmap_dir: "tmp/appmap"
-packages:
-- path: "seedu.address"
