@@ -165,6 +165,18 @@ public class Person {
     }
 
     /**
+     * Returns true if both persons have the same phone number.
+     * This defines a weaker notion of equality between two persons.
+     */
+    public boolean isSamePhoneNumber(Person otherPerson) {
+        if (otherPerson == this) {
+            return true;
+        }
+
+        return otherPerson != null && otherPerson.getPhone().equals(getPhone());
+    }
+
+    /**
      * Returns true if the appointment is nurse and false otherwise.
      */
     public boolean isNurse() {

@@ -60,7 +60,7 @@ public class EditCommand extends Command {
             + "[" + PREFIX_MEDICAL_HISTORY + "MEDICAL_HISTORY]...\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + "91234567 "
-            + PREFIX_EMAIL + "johndoe@example.com";
+            + PREFIX_BLOODTYPE + "B+";
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
@@ -69,6 +69,7 @@ public class EditCommand extends Command {
     public static final String MESSAGE_INVALID_MEDICAL_HISTORY_DELETE = "Delete medical history in order "
                                                                       + "to change to nurse appointment."
                                                                       + " (e.g. edit 1 mh/ to remove medical history).";
+    public static final String MESSAGE_DUPLICATE_PHONE_NUMBER = "This phone number already exists in the address book.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -102,6 +103,12 @@ public class EditCommand extends Command {
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+        }
+
+        boolean isPhoneEdited = !(personToEdit.getPhone().equals(editedPerson.getPhone()));
+
+        if (isPhoneEdited && model.hasSamePhoneNumber(editedPerson)) {
+            throw new CommandException(MESSAGE_DUPLICATE_PHONE_NUMBER);
         }
 
         model.setPerson(personToEdit, editedPerson);
